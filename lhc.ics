@@ -1,0 +1,58 @@
+BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTEND:20200329T000000Z
+LOCATION:Laboratório Hacker de Campinas
+DTSTART:20200328T000000Z
+SUMMARY:International Hackerspaces Open Day 2020
+UID:66a775bc-56c1-4cd6-926e-2fdb39c8d3aa@66a7.org
+URL:https://lhc.net.br/wiki/Evento:2020/03/28_International_Hackerspaces_Open_Day_2020
+END:VEVENT
+BEGIN:VEVENT
+CREATED:20200218T202608Z
+CLASS:PUBLIC
+DTSTAMP:20200226T191034Z
+DESCRIPTION:Laboratório Hacker de Campinas (LHC)\nThursday\, March 12 at 7:30 PM\n\nEm menos de 180 dias a Lei Geral de Proteção de Dados entrará em vigor. Mas\, afinal\, o que é a LGPD? A Lei n. 13.709/2018\, mais conhecida como Lei Ger...\n\nhttps://www.meetup.com/LabHackerCampinas/events/268807424/
+DTEND:20200313T010000Z
+GEO:-22.900000;-47.080000
+LAST-MODIFIED:20200219T145816Z
+LOCATION:LHC - Laboratório Hacker de Campinas (R. Araribóia\, 121\, Campinas\, Brazil 13041-350)
+DTSTART:20200312T223000Z
+STATUS:CONFIRMED
+SUMMARY:O que é e quando entra em vigor a LGPD?
+UID:event_268807424@meetup.com
+URL:https://www.meetup.com/LabHackerCampinas/events/268807424/
+END:VEVENT
+BEGIN:VEVENT
+DTEND:20200406T000000Z
+LOCATION:Laboratório Hacker de Campinas
+DTSTART:20200405T000000Z
+SUMMARY:Tosconf-3
+UID:83915002-8ad9-4d3b-9068-42fd26576f5c@8391.org
+URL:https://lhc.net.br/wiki/Evento:2020/04/05_Tosconf-3
+END:VEVENT
+BEGIN:VEVENT
+DTEND:20200313T000000Z
+LOCATION:Laboratório Hacker de Campinas
+DTSTART:20200312T000000Z
+SUMMARY:LGPD talk
+UID:0ce5f60c-68f9-443d-acdd-bb3a8e06cb6d@0ce5.org
+URL:https://lhc.net.br/wiki/Evento:2020/03/12_LGPD_talk
+END:VEVENT
+BEGIN:VEVENT
+CREATED:20200223T130513Z
+CLASS:PUBLIC
+DTSTAMP:20200226T191035Z
+DESCRIPTION:GruPy-Campinas\nTuesday\, March 3 at 7:30 PM\n\nIMPORTANTE: DEVIDO A LIMITAÇÃO DE ESPAÇO NO LHC (CADEIRAS) AS VAGAS SÃO LIMITADAS E É PRECISO CONFIRMAR A PRESENÇA. Você sabe o que é um Coding Dojo? ...\n\nhttps://www.meetup.com/GruPy-Campinas/events/268925086/
+DTEND:20200304T010000Z
+GEO:-22.900000;-47.080000
+LAST-MODIFIED:20200223T145908Z
+LOCATION:LHC - Laboratório Hacker de Campinas (R. Araribóia\, 121\, Campinas\, Brazil 13041-350)
+DTSTART:20200303T223000Z
+STATUS:CONFIRMED
+SUMMARY:Coding Dojo com Python
+UID:event_268925086@meetup.com
+URL:https://www.meetup.com/GruPy-Campinas/events/268925086/
+END:VEVENT
+PRODID:ics.py - http://git.io/lLljaA
+VERSION:2.0
+END:VCALENDAR

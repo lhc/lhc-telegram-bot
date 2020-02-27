@@ -168,6 +168,13 @@ def batima(update, context):
     context.bot.send_photo(update.message.chat_id, open("batima.jpg", "rb"))
 
 
+def boom(update, context):
+    context.bot.send_animation(
+        chat_id=update.message.chat_id,
+        animation=open("boom.mp4", "rb"),
+    )
+
+
 API_TOKEN = "TOKEN"
 updater = Updater(API_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
@@ -177,6 +184,7 @@ dispatcher.add_handler(CommandHandler("quem", quem))
 dispatcher.add_handler(CommandHandler("status", status))
 dispatcher.add_handler(CommandHandler("grana", grana))
 dispatcher.add_handler(CommandHandler("batima", batima))
+dispatcher.add_handler(CommandHandler("boom", boom))
 dispatcher.add_handler(CommandHandler("pizza", pizza))
 dispatcher.add_handler(CommandHandler("historico", historico))
 

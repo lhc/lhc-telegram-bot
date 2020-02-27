@@ -129,6 +129,14 @@ def batima(update, context):
     context.bot.send_photo(update.message.chat_id, open("batima.jpg", "rb"))
 
 
+def quemsou(update, context):
+    context.bot.send_photo(
+        update.message.chat_id,
+        open("joker.png", "rb"),
+        caption="Eu sou um palhaço, eu sou o coringa, o palhaço, o Joker, o palhaço!",
+    )
+
+
 def boom(update, context):
     context.bot.send_animation(
         chat_id=update.message.chat_id, animation=open("boom.mp4", "rb")
@@ -197,6 +205,7 @@ def init_bot():
 
     dispatcher.add_handler(CommandHandler("quando", quando))
     dispatcher.add_handler(CommandHandler("quem", quem))
+    dispatcher.add_handler(CommandHandler("quemsou", quemsou))
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("grana", grana))
     dispatcher.add_handler(CommandHandler("batima", batima))

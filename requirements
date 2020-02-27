@@ -1,3 +1,5 @@
+dynaconf
 ics
 parsel
 requests
+tinydb

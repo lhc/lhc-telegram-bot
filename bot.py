@@ -17,40 +17,6 @@ logger = logging.getLogger("tcpserver")
 was_open = False
 
 
-def lhc_state():
-    response = requests.get("https://lhc.net.br/spacenet.json")
-    spacenet = response.json()
-    state = spacenet.get("state", {})
-    return state
-
-
-def is_lhc_open(state):
-    return state.get("open")
-
-
-def check_status_change(context):
-    global was_open  # I don't like this!
-
-    state = lhc_state()
-    is_open = is_lhc_open(state)
-    if is_open != was_open:
-        was_open = is_open
-        since = state.get("lastchange")
-        since_date = datetime.fromtimestamp(since)
-
-        response = requests.get("https://lhc.net.br/spacenet.json?whois")
-        whois = response.json()
-        whois_connected = whois.get("who", [])
-        who_opened = whois_connected[0]
-
-        if is_open:
-            msg = f"O LHC foi aberto \U0001F513 por {who_opened} às {since_date}."
-        else:
-            msg = f"O LHC está fechado \U0001F512 desde {since_date}"
-
-        context.bot.send_message(context.job.context, text=msg)
-
-
 def non_commands(update, context):
     message = update.message.text
 
@@ -67,11 +33,6 @@ def non_commands(update, context):
         context.bot.send_message(
             chat_id=update.effective_chat.id,
             text="Eu ainda não sei o que você quer dizer com isso...",
-        )
-
-    if "check_status_change" not in [job.name for job in context.job_queue.jobs()]:
-        context.job_queue.run_repeating(
-            check_status_change, 60, context=update.message.chat_id
         )
 
 
@@ -201,10 +162,22 @@ def update_lhc_status(context):
 
     if current_status["open"] != last_status["open"]:
         is_open = current_status["open"]
+        since = current_status["last_change"]
+        since_date = datetime.fromtimestamp(since)
+
         if is_open:
             response = requests.get("https://lhc.net.br/spacenet.json?whois")
             whois = response.json()
-            current_status["who_opened"] = whois.get("who", [])
+            who_opened = whois.get("who", [])
+            current_status["who_opened"] = who_opened
+
+            notify_msg = (
+                f"O LHC foi aberto \U0001F513 por {who_opened} às {since_date}."
+            )
+        else:
+            notify_msg = f"O LHC está fechado \U0001F512 desde {since_date}."
+
+        context.bot.send_message(chat_id="@lhc_campinas", text=notify_msg)
 
         db.insert(
             {

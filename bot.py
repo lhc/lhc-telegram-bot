@@ -6,7 +6,7 @@ from datetime import datetime
 import requests
 from dynaconf import settings
 from ics import Calendar
-from telegram import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import (
     CommandHandler,
     ConversationHandler,
@@ -216,20 +216,20 @@ def pizza_calculator(update, context):
 
     no_pessoas = int(text)
     if no_pessoas < 0:
-        update.message.reply_text(
-            "Número negativo de pizzas? Não viramos uma pizzaria."
-        )
+        reply_message = "Número negativo de pizzas? Não viramos uma pizzaria."
     elif no_pessoas == 0:
-        update.message.reply_text("Para nenhuma pessoa, é melhor nem comprar pizza.")
+        reply_message = "Para nenhuma pessoa, é melhor nem comprar pizza."
     elif 1 <= no_pessoas <= 100:
         no_pizzas = math.ceil(3 * (no_pessoas + 1) / 8)
-        update.message.reply_text(
+        reply_message = (
             f"Para {no_pessoas} pessoas, compre {no_pizzas} pizzas de 8 \U0001F355."
         )
     elif no_pessoas > 100:
-        update.message.reply_text(
-            "Mais que 100 pessoas no LHC? Isso vai dar overflow nos meus cálculos, se vira aí."
-        )
+        reply_message = "Mais que 100 pessoas no LHC? Isso vai dar overflow nos meus cálculos, se vira aí."
+    else:
+        reply_message = "Eu não entendi o que você quis dizer com isso."
+
+    update.message.reply_text(reply_message, reply_markup=ReplyKeyboardRemove())
 
     return -1
 

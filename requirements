@@ -1,5 +1,6 @@
 dynaconf
 ics
 parsel
+python-telegram-bot
 requests
 tinydb

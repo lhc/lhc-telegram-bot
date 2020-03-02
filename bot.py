@@ -102,7 +102,6 @@ def status(update, context):
         else {"open": None}
     )
     is_open = last_status.get("open")
-
     if is_open is None:
         context.bot.send_message(
             update.message.chat_id,
@@ -130,20 +129,20 @@ def historico(update, context):
 
 
 def batima(update, context):
-    context.bot.send_photo(update.message.chat_id, open("batima.jpg", "rb"))
+    context.bot.send_photo(update.message.chat_id, open("media/batima.jpg", "rb"))
 
 
 def quemsou(update, context):
     context.bot.send_photo(
         update.message.chat_id,
-        open("joker.png", "rb"),
+        open("media/joker.png", "rb"),
         caption="Eu sou um palhaço, eu sou o coringa, o palhaço, o Joker, o palhaço!",
     )
 
 
 def boom(update, context):
     context.bot.send_animation(
-        chat_id=update.message.chat_id, animation=open("boom.mp4", "rb")
+        chat_id=update.message.chat_id, animation=open("media/boom.mp4", "rb")
     )
 
 

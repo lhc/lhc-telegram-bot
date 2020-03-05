@@ -58,11 +58,8 @@ def generate_ics(event_sources, future_only=True):
     all_events = list(itertools.chain(*event_sources))
 
     if future_only:
-        yesterday = datetime.datetime.now(
-            tz=datetime.timezone.utc
-        ) - datetime.timedelta(days=1)
         all_events = [
-            event for event in all_events if event.begin.datetime >= yesterday
+            event for event in all_events if event.begin.date() >= datetime.date.today()
         ]
 
     calendar = Calendar()

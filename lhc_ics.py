@@ -68,12 +68,12 @@ def generate_ics(event_sources, future_only=True):
     return calendar
 
 
-def lhc_ics():
+def lhc_ics(output_file):
     event_sources = [lhc_wiki_events(), lhc_meetup_events(), grupy_campinas_events()]
     calendar = generate_ics(event_sources)
-    with open("lhc.ics", "w") as f:
+    with open(output_file, "w") as f:
         f.write(str(calendar))
 
 
 if __name__ == "__main__":
-    lhc_ics()
+    lhc_ics("lhc.ics")

@@ -5,7 +5,6 @@ from datetime import datetime
 
 import requests
 from dynaconf import settings
-from ics import Calendar
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import (
     CommandHandler,
@@ -15,24 +14,11 @@ from telegram.ext import (
     Updater,
 )
 
-from bot_commands import generic, status
+from bot_commands import generic, schedule, status
 from models import Status, db
 
 logging.basicConfig(level=settings.LOG_LEVEL)
 logger = logging.getLogger("joker")
-
-
-# def quando(update, context):
-#     with open("lhc.ics", "r") as f:
-#         calendar = Calendar(f.read())
-#     next_event = min(list(calendar.events), key=lambda e: e.begin)
-#     event = {
-#         "title": next_event.name,
-#         "date": next_event.begin.strftime("%d/%m/%Y"),
-#         "url": next_event.url,
-#     }
-#     next_event_msg = f"Vai rolar \"{event['title']}\" em {event['date']}. Mais informações em {event['url']}."
-#     context.bot.send_message(update.message.chat_id, text=next_event_msg)
 
 
 # def grana(update, context):
@@ -90,8 +76,7 @@ def init_bot():
     updater.job_queue.run_repeating(status.status_check, interval=60, first=0)
     dispatcher.add_handler(CommandHandler("quem", status.quem))
     dispatcher.add_handler(CommandHandler("status", status.status))
-
-    # dispatcher.add_handler(CommandHandler("quando", quando))
+    dispatcher.add_handler(CommandHandler("quando", schedule.quando))
     # dispatcher.add_handler(CommandHandler("grana", grana))
     # dispatcher.add_handler(CommandHandler("historico", historico))
 

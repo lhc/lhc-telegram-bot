@@ -20,9 +20,16 @@ def init_bot():
     updater.job_queue.run_repeating(status.status_check, interval=60, first=0)
     dispatcher.add_handler(CommandHandler("quem", status.quem))
     dispatcher.add_handler(CommandHandler("status", status.status))
+
+    updater.job_queue.run_repeating(
+        schedule.generate_ics, interval=60 * 60 * 24, first=0
+    )
     dispatcher.add_handler(CommandHandler("quando", schedule.quando))
+
     dispatcher.add_handler(CommandHandler("grana", money.grana))
+
     dispatcher.add_handler(pizza.pizza_conversation_handler)
+
     dispatcher.add_handler(CommandHandler("quemsou", generic.quemsou))
     dispatcher.add_handler(CommandHandler("batima", generic.batima))
     dispatcher.add_handler(CommandHandler("boom", generic.boom))

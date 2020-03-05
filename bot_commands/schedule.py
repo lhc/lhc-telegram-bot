@@ -1,11 +1,17 @@
 import datetime
+import logging
 
+from dynaconf import settings
 from ics import Calendar
+from utils.ics_calendar import lhc_ics
+
+logging.basicConfig(level=settings.LOG_LEVEL)
+logger = logging.getLogger("joker")
 
 
 def quando(update, context):
-    with open("lhc.ics", "r") as f:
-        calendar = Calendar(f.read())
+    with open(settings.ICS_LOCATION, "r") as ics_file:
+        calendar = Calendar(ics_file.read())
 
     future_events = list(
         {
@@ -22,3 +28,8 @@ def quando(update, context):
     }
     next_event_msg = f"Vai rolar \"{event['title']}\" em {event['date']}. Mais informações em {event['url']}."
     context.bot.send_message(update.message.chat_id, text=next_event_msg)
+
+
+def generate_ics(context):
+    logger.info("Generating new ICS file.")
+    lhc_ics(settings.ICS_LOCATION)

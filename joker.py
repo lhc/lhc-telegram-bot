@@ -1,7 +1,6 @@
 import logging
 import math
 import random
-from commands import generic, status
 from datetime import datetime
 
 import requests
@@ -16,6 +15,7 @@ from telegram.ext import (
     Updater,
 )
 
+from bot_commands import generic, status
 from models import Status, db
 
 logging.basicConfig(level=settings.LOG_LEVEL)
@@ -92,9 +92,7 @@ def init_bot():
     dispatcher.add_handler(CommandHandler("status", status.status))
 
     # dispatcher.add_handler(CommandHandler("quando", quando))
-
     # dispatcher.add_handler(CommandHandler("grana", grana))
-
     # dispatcher.add_handler(CommandHandler("historico", historico))
 
     # pizza_conversation_handler = ConversationHandler(

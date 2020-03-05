@@ -14,19 +14,12 @@ from telegram.ext import (
     Updater,
 )
 
-from bot_commands import generic, schedule, status
+from bot_commands import generic, money, schedule, status
 from models import Status, db
 
 logging.basicConfig(level=settings.LOG_LEVEL)
 logger = logging.getLogger("joker")
 
-
-# def grana(update, context):
-#     context.bot.send_message(
-#         update.message.chat_id,
-#         text="Eu ainda não sei como verificar a situação financeira do LHC... mas você sempre pode [fazer uma doação via PayPal](http://bit.ly/doe-para-o-lhc) e ajudar a manter o hackerspace!",
-#         parse_mode="Markdown",
-#     )
 
 
 # def historico(update, context):
@@ -77,7 +70,7 @@ def init_bot():
     dispatcher.add_handler(CommandHandler("quem", status.quem))
     dispatcher.add_handler(CommandHandler("status", status.status))
     dispatcher.add_handler(CommandHandler("quando", schedule.quando))
-    # dispatcher.add_handler(CommandHandler("grana", grana))
+    dispatcher.add_handler(CommandHandler("grana", money.grana))
     # dispatcher.add_handler(CommandHandler("historico", historico))
 
     # pizza_conversation_handler = ConversationHandler(

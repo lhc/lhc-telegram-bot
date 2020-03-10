@@ -47,7 +47,6 @@ def quem(update, context):
 
 def status_check(context):
     logger.info("Checking status of LHC.")
-
     last_status = Status.select().order_by(Status.date.desc()).first()
 
     response = requests.get("https://lhc.net.br/spacenet.json")
@@ -62,6 +61,14 @@ def status_check(context):
         is_open=is_open, last_change=last_change, date=datetime.now(),
     )
 
+    if is_open:
+        response = requests.get("https://lhc.net.br/spacenet.json?whois")
+        whois = response.json()
+        n_unknown_macs = whois.get("n_unknown_macs", 0)
+        current_status.n_unknown_macs = n_unknown_macs
+        who = whois.get("who", [])
+        current_status.who = ", ".join(who)
+
     status = "OPEN" if is_open else "CLOSED"
     logger.info(f"LHC is {status} since {current_status.last_change}.")
 
@@ -69,16 +76,7 @@ def status_check(context):
         last_status is None or current_status.is_open != last_status.is_open
     )
     if status_changed:
-        response = requests.get("https://lhc.net.br/spacenet.json?whois")
-        whois = response.json()
-
-        n_unknown_macs = whois.get("n_unknown_macs", 0)
-        current_status.n_unknown_macs = n_unknown_macs
-
         if is_open:
-            who = whois.get("who", [])
-            current_status.who = ", ".join(who)
-
             notify_msg = f"O LHC foi aberto \U0001F513 por {current_status.who} às {current_status.last_change}."
         else:
             notify_msg = (

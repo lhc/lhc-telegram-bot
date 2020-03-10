@@ -33,23 +33,25 @@ def lhc_meetup_events():
 
 def lhc_wiki_events():
     LHC_WIKI_EVENTS_URL = "https://lhc.net.br/wiki/Categoria:Eventos"
+
+    lhc_events = []
     response = requests.get(LHC_WIKI_EVENTS_URL)
     selector = Selector(text=response.text)
     raw_events = selector.xpath(
         "//script[contains(text(), 'window.eventCalendarData.push')]/text()"
     ).re_first(r"window.eventCalendarData.push\((.*)\)")
-    events = json.loads(raw_events)
+    if raw_events is not None:
+        events = json.loads(raw_events)
 
-    lhc_events = []
-    for event_data in events:
-        event = Event(
-            name=event_data.get("title"),
-            begin=event_data.get("start"),
-            end=event_data.get("end"),
-            url=urljoin("https://lhc.net.br", event_data.get("url", "")),
-            location="Laboratório Hacker de Campinas",
-        )
-        lhc_events.append(event)
+        for event_data in events:
+            event = Event(
+                name=event_data.get("title"),
+                begin=event_data.get("start"),
+                end=event_data.get("end"),
+                url=urljoin("https://lhc.net.br", event_data.get("url", "")),
+                location="Laboratório Hacker de Campinas",
+            )
+            lhc_events.append(event)
     return lhc_events
 
 

@@ -12,13 +12,22 @@ def pizza(update, context):
     )
     return 1
 
+def try_parse_int(text):
+    try:
+        ret = int(text)
+    except ValueError:
+        return 0, ValueError
+    finally:
+        return ret, None
 
 def pizza_calculator(update, context):
     text = update.message.text
     context.user_data["choice"] = text
 
-    no_pessoas = int(text)
-    if no_pessoas < 0:
+    no_pessoas, err = try_parse_int(text)
+    if err is not None:
+        reply_message = "Muito engraçado, hein?"
+    elif no_pessoas < 0:
         reply_message = "Número negativo de pizzas? Não viramos uma pizzaria."
     elif no_pessoas == 0:
         reply_message = "Para nenhuma pessoa, é melhor nem comprar pizza."

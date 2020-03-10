@@ -22,9 +22,9 @@ def grana(update, context):
     bar = progress_bar(incomes, expenses)
 
     if incomes > expenses:
-        msg = f"Temos fluxo positivo de caixa esse mês! \U0001F389 Recebemos R${incomes} de R${expenses}"
+        msg = f"Temos fluxo positivo de caixa esse mês! \U0001F389 Recebemos R${incomes:.2f} de R${expenses:.2f}"
     else:
-        msg = f"Este mês recebemos R${incomes} de R${expenses} \U0001F4B8.\n\n{bar}\n\nAjude a fechar as contas do mês [fazendo uma doação via PayPal](http://bit.ly/doe-para-o-lhc) \U0001F4B5."
+        msg = f"Este mês recebemos R${incomes:.2f} de R${expenses:.2f} \U0001F4B8.\n\n{bar}\n\nAjude a fechar as contas do mês [fazendo uma doação via PayPal](http://bit.ly/doe-para-o-lhc) \U0001F4B5."
 
     context.bot.send_message(
         update.message.chat_id, text=msg, parse_mode="Markdown",

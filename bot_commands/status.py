@@ -86,7 +86,7 @@ def status_check(context):
             )
 
         logger.info(f"LHC status changed. Sending notification to LHC channel.")
-        # context.bot.send_message(chat_id="@lhc_campinas", text=notify_msg)
+        context.bot.send_message(chat_id="@lhc_campinas", text=notify_msg)
 
     current_status.save()
 

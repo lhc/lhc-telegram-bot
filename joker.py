@@ -30,6 +30,7 @@ def init_bot():
 
     dispatcher.add_handler(pizza.pizza_conversation_handler)
 
+    dispatcher.add_handler(CommandHandler("onde", generic.onde))
     dispatcher.add_handler(CommandHandler("quemsou", generic.quemsou))
     dispatcher.add_handler(CommandHandler("batima", generic.batima))
     dispatcher.add_handler(CommandHandler("boom", generic.boom))

@@ -2,6 +2,7 @@ import logging
 import random
 
 from dynaconf import settings
+from telegram import ParseMode
 
 logging.basicConfig(level=settings.LOG_LEVEL)
 logger = logging.getLogger("joker")
@@ -24,6 +25,18 @@ def quemsou(update, context):
             joker,
             caption="Eu sou um palhaço, eu sou o coringa, o palhaço, o Joker, o palhaço!",
         )
+
+
+def onde(update, context):
+    message = update.message.text
+
+    if message and message.startswith("/") and message == 'onde':
+        with open("media/maps-link.html", "r") as link:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=link,
+                parse_mode=ParseMode.HTML
+            )
 
 
 def non_commands(update, context):

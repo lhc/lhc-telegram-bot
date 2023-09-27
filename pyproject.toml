@@ -1,0 +1,22 @@
+[project]
+name = "joker"
+version = "0.2"
+license = {file = "LICENSE"}
+description = "LHC Telegram bot"
+authors = [
+    {name = "Renne Rocha", email = "renne@rocha.dev.br"},
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "ics",
+  "python-decouple",
+  "python-telegram-bot[job-queue]",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+joker = ["assets/*" ,]

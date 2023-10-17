@@ -42,3 +42,54 @@ After configuring the bot, you can run it using the following command:
 ```
 $ python run.py
 ```
+
+## Deployment
+
+Bot is running in a [fly.io](https://fly.io/) account. If you are planning to upgrade the live bot
+in LHC channel, ask some member of LHC board to get access credentials.
+
+### Authentication
+
+Before start using [fly.io](https://fly.io/), you need to authenticate with the right credentials. Use
+the command bellow and follow the instructions:
+
+```
+$ flyctl auth login
+```
+
+### Configuration
+
+To set/update the environment variables to configure the bot (tokens, IDs, URLs, etc), use the
+following command for each variable you want to set:
+
+```
+flyctl secrets set VARIABLE_NAME="value"
+```
+
+You can see the list of secrets configured using the command:
+
+```
+flyctl secrets list
+```
+
+### Production Deploy
+
+When everything is configured as desired, deploy to production using the command:
+
+```
+flyctl deploy --verbose
+```
+
+### Status
+
+This command will show the status of the application:
+
+```
+flyctl status
+```
+
+This command will show the logs of the application:
+
+```
+flyctl logs
+```

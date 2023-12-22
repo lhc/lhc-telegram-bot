@@ -21,9 +21,26 @@ async def quem(update, context):
 async def status_infra(update, context):
     response = httpx.get(settings.MONTASTIC_RSS_URL)
     rss = parsel.Selector(response.text)
-    status = rss.css("item title::text").getall()
-    status_msg = "\n".join(sorted(status))
-    await context.bot.send_message(
-        update.message.chat_id,
-        text=f"Status da infraestrutura do LHC:\n\n{status_msg}",
-    )
+    statuses = rss.css("item title::text").getall()
+
+    status_emojis = {
+        "[OK]": "🟢",
+        "[Alert]": "🔴",
+    }
+    formatted_statuses = []
+    for status in sorted(statuses):
+        condition, _ = status.split(" - ")
+        emoji = status_emojis.get(condition, "🟡")
+        formatted_statuses.append(status.replace(condition, emoji))
+
+    if formatted_statuses:
+        status_msg = "\n".join(formatted_statuses)
+        await context.bot.send_message(
+            update.message.chat_id,
+            text=f"Status da infraestrutura do LHC:\n\n{status_msg}",
+        )
+    else:
+        await context.bot.send_message(
+            update.message.chat_id,
+            text="🔴 Não foi possível obter o status da infraestrutura do LHC.",
+        )

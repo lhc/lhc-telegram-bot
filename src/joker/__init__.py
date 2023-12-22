@@ -11,6 +11,7 @@ def Joker(settings):
     # Status
     app.add_handler(CommandHandler("quem", status.quem))
     app.add_handler(CommandHandler("status", status.status))
+    app.add_handler(CommandHandler("status_infra", status.status_infra))
 
     # Finance commands
     app.add_handler(CommandHandler("grana", finance.grana))

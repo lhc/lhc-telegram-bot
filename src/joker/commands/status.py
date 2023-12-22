@@ -21,8 +21,8 @@ async def quem(update, context):
 async def status_infra(update, context):
     response = httpx.get(settings.MONTASTIC_RSS_URL)
     rss = parsel.Selector(response.text)
-    status = rss.css("item title").getall()
-    status_msg = "\n".join(status)
+    status = rss.css("item title::text").getall()
+    status_msg = "\n".join(sorted(status))
     await context.bot.send_message(
         update.message.chat_id,
         text=f"Status da infraestrutura do LHC:\n\n{status_msg}",

@@ -38,6 +38,7 @@ async def status_infra(update, context):
         await context.bot.send_message(
             update.message.chat_id,
             text=f"Status da infraestrutura do LHC:\n\n{status_msg}",
+            disable_web_page_preview=True,
         )
     else:
         await context.bot.send_message(

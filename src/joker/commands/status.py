@@ -18,7 +18,7 @@ async def quem(update, context):
     )
 
 
-async def status_infra(update, context):
+def _get_status_infra():
     response = httpx.get(settings.MONTASTIC_RSS_URL)
     rss = parsel.Selector(response.text)
     statuses = rss.css("item title::text").getall()
@@ -35,13 +35,22 @@ async def status_infra(update, context):
 
     if formatted_statuses:
         status_msg = "\n".join(formatted_statuses)
-        await context.bot.send_message(
-            update.message.chat_id,
-            text=f"Status da infraestrutura do LHC:\n\n{status_msg}",
-            disable_web_page_preview=True,
-        )
-    else:
-        await context.bot.send_message(
-            update.message.chat_id,
-            text="🔴 Não foi possível obter o status da infraestrutura do LHC.",
-        )
+        return f"Status da infraestrutura do LHC:\n\n{status_msg}"
+
+    return "🔴 Não foi possível obter o status da infraestrutura do LHC."
+
+
+async def status_infra(update, context):
+    await context.bot.send_message(
+        update.message.chat_id,
+        text=_get_status_infra(),
+        disable_web_page_preview=True,
+    )
+
+
+async def recurring_status_infra(context):
+    await context.bot.send_message(
+        settings.LHC_CHAT_ID,
+        text=_get_status_infra(),
+        disable_web_page_preview=True,
+    )

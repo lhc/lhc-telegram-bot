@@ -12,15 +12,23 @@ def Joker(settings):
     app.add_handler(CommandHandler("quem", status.quem))
     app.add_handler(CommandHandler("status", status.status))
     app.add_handler(CommandHandler("status_infra", status.status_infra))
+    app.job_queue.run_daily(status.status_infra, datetime.time(8, 0))
 
     # Finance commands
     app.add_handler(CommandHandler("grana", finance.grana))
     app.add_handler(CommandHandler("pix", finance.pix))
+    app.job_queue.run_daily(
+        finance.grana,
+        datetime.time(9, 0),
+        days=(
+            1,
+            3,
+            5,
+        ),
+    )
 
     # Calendar commands
-    app.job_queue.run_repeating(
-        calendar.pin_today_event, interval=60 * 60 * 24, first=datetime.time(5, 0)
-    )
+    app.job_queue.run_daily(calendar.pin_today_event, datetime.time(5, 0))
     app.add_handler(CommandHandler("quando", calendar.quando))
 
     # Miscellaneous commands

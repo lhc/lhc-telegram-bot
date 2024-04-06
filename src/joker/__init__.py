@@ -17,15 +17,15 @@ def Joker(settings):
     # Finance commands
     app.add_handler(CommandHandler("grana", finance.grana))
     app.add_handler(CommandHandler("pix", finance.pix))
-    #    app.job_queue.run_daily(
-    #        finance.grana,
-    #        datetime.time(9, 0),
-    #        days=(
-    #            1,
-    #            3,
-    #            5,
-    #        ),
-    #    )
+    app.job_queue.run_daily(
+        finance.grana,
+        datetime.time(15, 0),
+        days=(
+            1,
+            3,
+            5,
+        ),
+    )
 
     # Calendar commands
     app.job_queue.run_daily(calendar.pin_today_event, datetime.time(5, 0))

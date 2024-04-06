@@ -23,7 +23,7 @@ async def pix(update, context):
         )
 
 
-async def grana(update, context):
+def _get_grana():
     response = httpx.get(settings.FINANCE_STATUS_URL)
     status = response.json()
 
@@ -40,8 +40,20 @@ async def grana(update, context):
     else:
         msg = f"Este mês recebemos R${incomes:.2f} de R${expenses:.2f} \U0001F4B8.\n\n{bar}\n\nAjude a fechar as contas do mês [fazendo uma doação via PayPal](http://bit.ly/doe-para-o-lhc) ou via Pix em batman@lhc.net.br \U0001F4B5."
 
+    return msg
+
+
+async def grana(update, context):
     await context.bot.send_message(
         update.message.chat_id,
-        text=msg,
+        text=_get_grana(),
+        parse_mode="Markdown",
+    )
+
+
+async def recurring_grana(context):
+    await context.bot.send_message(
+        settings.LHC_CHAT_ID,
+        text=_get_grana(),
         parse_mode="Markdown",
     )

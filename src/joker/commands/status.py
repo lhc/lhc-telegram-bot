@@ -1,5 +1,6 @@
 import httpx
 import parsel
+from telegram.constants import ParseMode
 
 from joker import settings
 
@@ -45,6 +46,7 @@ async def status_infra(update, context):
         update.message.chat_id,
         text=_get_status_infra(),
         disable_web_page_preview=True,
+        parse_mode=ParseMode.MARKDOWN,
     )
 
 
@@ -53,4 +55,5 @@ async def recurring_status_infra(context):
         settings.LHC_CHAT_ID,
         text=_get_status_infra(),
         disable_web_page_preview=True,
+        parse_mode=ParseMode.MARKDOWN,
     )

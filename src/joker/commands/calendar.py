@@ -1,8 +1,10 @@
 import datetime
 import logging
+import time
 
 import httpx
 from ics import Calendar
+from telegram.constants import ParseMode
 
 from joker import settings
 
@@ -10,7 +12,13 @@ logger = logging.getLogger("joker")
 
 
 def get_events(when=""):
-    response = httpx.get(settings.ICS_LOCATION)
+    try:
+        response = httpx.get(settings.ICS_LOCATION)
+    except httpx.ReadTimeout:
+        # Wait for fly.io machine to go live again
+        time.sleep(1)
+        response = httpx.get(settings.ICS_LOCATION)
+
     calendar = Calendar(response.text)
 
     all_events = list({event for event in calendar.events})
@@ -59,7 +67,7 @@ async def pin_today_event(update, context):
         today_event_msg = f"**Hoje** {event['date']} vai rolar \"{event['title']}\". Mais informações em {event['url']}."
 
         message = context.bot.send_message(
-            settings.LHC_CHAT_ID, text=today_event_msg, parse_mode="Markdown"
+            settings.LHC_CHAT_ID, text=today_event_msg, parse_mode=ParseMode.MARKDOWN
         )
 
         await context.bot.pin_chat_message(

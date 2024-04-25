@@ -36,7 +36,7 @@ def _get_grana():
     bar = progress_bar(incomes, expenses)
 
     if incomes > expenses:
-        msg = f"Temos fluxo positivo de caixa esse mês! \U0001F389 Recebemos R${incomes:.2f} de R${expenses:.2f}\n\nMas você pode melhorar ainda mais essa marca [fazendo uma doação via PayPal](http://bit.ly/doe-para-o-lhc) ou via Pix em batman@lhc.net.br \U0001F4B5."
+        msg = f"Temos fluxo de caixa positivo esse mês! \U0001F389 Recebemos doações suficientes para pagar os R${expenses:.2f} de despesas previstas para o mês!\n\nMas você pode melhorar ainda mais essa marca para fazermos mais investimentos para melhorar o hackerspace [fazendo uma doação via PayPal](http://bit.ly/doe-para-o-lhc) ou via Pix em batman@lhc.net.br \U0001F4B5."
     else:
         msg = f"Este mês recebemos R${incomes:.2f} de R${expenses:.2f} \U0001F4B8.\n\n{bar}\n\nAjude a fechar as contas do mês [fazendo uma doação via PayPal](http://bit.ly/doe-para-o-lhc) ou via Pix em batman@lhc.net.br \U0001F4B5."
 

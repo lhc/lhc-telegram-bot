@@ -6,11 +6,17 @@ from joker import settings
 
 
 async def status(update, context):
+    response = httpx.get("https://lhc.net.br/spacenet.json?whois").json()
+    status = f'aberto com {len(response["who"])} pessoas associadas' if response["who"] else 'fechado'
+    if response["n_unknown_macs"]:
+        desconhecidos = f'mais {response["n_unknown_macs"]} maritacas' if response["n_unknown_macs"] > 1 else 'mais uma maritaca solitária'
+    else:
+        desconhecidos = ''
+
     await context.bot.send_message(
         update.message.chat_id,
-        text="O LHC pode estar aberto \U0001F513 ou fechado \U0001F512. Eu não consegui descobrir.",
+        text=f"O LHC está {status}{desconhecidos} desde {response['last_change']}",
     )
-
 
 async def quem(update, context):
     await context.bot.send_message(

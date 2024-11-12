@@ -7,7 +7,7 @@ from joker import settings
 
 async def status(update, context):
     response = httpx.get("https://lhc.net.br/spacenet.json?whois").json()
-    status = f'aberto com {len(response["who"])} pessoas associadas' if response["who"] else 'fechado'
+    status = f'aberto com {response["n_known_macs"]} pessoas associadas' if response["n_known_macs"] else 'fechado'
     if response["n_unknown_macs"]:
         desconhecidos = f'mais {response["n_unknown_macs"]} maritacas' if response["n_unknown_macs"] > 1 else 'mais uma maritaca solitária'
     else:

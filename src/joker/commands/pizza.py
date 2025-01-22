@@ -27,10 +27,11 @@ async def pizza_calculator(update, context):
         elif no_pessoas == 0:
             reply_message = "Para nenhuma pessoa, é melhor nem comprar pizza."
         elif 1 <= no_pessoas <= 100:
-            no_pizzas = math.ceil(3 * (no_pessoas + 1) / 8)
-            reply_message = (
-                f"Para {no_pessoas} pessoas, compre {no_pizzas} pizzas de 8 \U0001F355."
-            )
+            reply_message = f"Com {no_pessoas} pessoas comendo 3 pedaços\U0001F355 cada:\n"
+            for tamanho in (8, 16, 22):
+                no_pizzas = math.ceil(3 * (no_pessoas + 1) / tamanho)
+                reply_message += f"• {no_pizzas} pizzas de {tamanho} pedaços\n"
+            reply_message += "Essa quantidade é calculada para sobrar um pouco"
         elif no_pessoas > 100:
             reply_message = "Mais que 100 pessoas no LHC? Isso vai dar overflow nos meus cálculos, se vira aí."
         else:

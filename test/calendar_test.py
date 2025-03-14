@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timedelta
 
 from unittest.mock import patch, Mock
+from parameterized import parameterized
 
 from ics import Event
 
@@ -59,9 +60,14 @@ class CalendarTest(unittest.TestCase):
         os.environ["FINANCE_STATUS_URL"] = "https://lhc.net.br/finance"
         os.environ["ICS_LOCATION"] = "https://gancio-eventos-lhc.fly.dev/api/events"
 
+
+    @parameterized.expand([
+        ("today"),
+        ("future")
+    ])
     @patch('httpx.get')
     @patch('ics.Calendar')
-    def test_today_2events_one_in_the_past_other_in_the_future(self, mock_Calendar, mock_get):
+    def test_today_2events_one_in_the_past_other_in_the_future(self, when, mock_Calendar, mock_get):
         # GIVEN
         mock_response = Mock()
         mock_response.text = gancio_events_json_response  # Example ICS content
@@ -80,18 +86,22 @@ class CalendarTest(unittest.TestCase):
         mock_calendar.events = [ event1, event2 ]
         mock_Calendar.return_value = mock_calendar
         # WHEN
-        events = cal.get_events("today")
+        events = cal.get_events(when)
         print(events)
-        # THEN the test may run at a time when the event2 still in the future
+        # THEN the test may run at a time when the event2 will be tomorrow
         if event2.begin.date() == datetime.today():
             self.assertEqual(len(events), 1)
             self.assertEqual(events[0].name, "CofeeOps")
         else:
             self.assertEqual(len(events), 0)
 
+    @parameterized.expand([
+        ("today"),
+        ("future")
+    ])
     @patch('httpx.get')
     @patch('ics.Calendar')
-    def test_today_2events_one_in_the_past_other_now(self, mock_Calendar, mock_get):
+    def test_today_2events_one_in_the_past_other_now(self, when, mock_Calendar, mock_get):
         # GIVEN
         mock_response = Mock()
         mock_response.text = gancio_events_json_response  # Example ICS content
@@ -109,7 +119,7 @@ class CalendarTest(unittest.TestCase):
         mock_calendar.events = [ event1, event2 ]
         mock_Calendar.return_value = mock_calendar
         # WHEN
-        events = cal.get_events("today")
+        events = cal.get_events(when)
         print(events)
         # THEN
         self.assertEqual(len(events), 1)

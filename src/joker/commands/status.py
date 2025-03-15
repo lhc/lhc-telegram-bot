@@ -1,21 +1,22 @@
 import httpx
 import parsel
+import datetime
 from telegram.constants import ParseMode
 
 from joker import settings
 
 
 async def status(update, context):
-    response = httpx.get("https://lhc.net.br/spacenet.json?whois").json()
-    status = f'aberto com {response["n_known_macs"]} pessoas associadas' if response["n_known_macs"] else 'fechado'
-    if response["n_unknown_macs"]:
-        desconhecidos = f'mais {response["n_unknown_macs"]} maritacas' if response["n_unknown_macs"] > 1 else 'mais uma maritaca solitária'
-    else:
-        desconhecidos = ''
+    response = httpx.get("https://status.lhc.net.br/").json()
+
+    status = "aberto" if response['state']['open'] else "fechado"
+
+    last_change = datetime.utcfromtimestamp(response['state']['lastchange'])
+    last_change = last_change.strftime('%Y-%m-%d %H:%M:%S')
 
     await context.bot.send_message(
         update.message.chat_id,
-        text=f"O LHC está {status}{desconhecidos} desde {response['last_change']}",
+        text=f"O LHC está {status} desde {last_change}",
     )
 
 async def quem(update, context):

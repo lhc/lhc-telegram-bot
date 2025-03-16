@@ -1,6 +1,7 @@
+import datetime
+
 import httpx
 import parsel
-import datetime
 from telegram.constants import ParseMode
 
 from joker import settings
@@ -11,13 +12,14 @@ async def status(update, context):
 
     status = "aberto" if response["state"]["open"] else "fechado"
 
-    last_change = datetime.utcfromtimestamp(response["state"]["lastchange"])
+    last_change = datetime.datetime.utcfromtimestamp(response["state"]["lastchange"])
     last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
 
     await context.bot.send_message(
         update.message.chat_id,
         text=f"O LHC está {status} desde {last_change}",
     )
+
 
 async def quem(update, context):
     await context.bot.send_message(

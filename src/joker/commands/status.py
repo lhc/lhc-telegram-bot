@@ -9,10 +9,10 @@ from joker import settings
 async def status(update, context):
     response = httpx.get("https://status.lhc.net.br/").json()
 
-    status = "aberto" if response['state']['open'] else "fechado"
+    status = "aberto" if response["state"]["open"] else "fechado"
 
-    last_change = datetime.utcfromtimestamp(response['state']['lastchange'])
-    last_change = last_change.strftime('%Y-%m-%d %H:%M:%S')
+    last_change = datetime.utcfromtimestamp(response["state"]["lastchange"])
+    last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
 
     await context.bot.send_message(
         update.message.chat_id,

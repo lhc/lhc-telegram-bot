@@ -7,6 +7,12 @@ from parameterized import parameterized
 
 from ics import Event
 
+os.environ["LHC_CHAT_ID"] = "1"
+os.environ["TELEGRAM_API_TOKEN"] = "abcdef"
+os.environ["MONTASTIC_RSS_URL"] = "https://lhc.net.br/rss"
+os.environ["FINANCE_STATUS_URL"] = "https://lhc.net.br/finance"
+os.environ["ICS_LOCATION"] = "https://gancio-eventos-lhc.fly.dev/api/events"
+
 import joker.commands.calendar as cal
 
 gancio_events_json_response = [{
@@ -53,14 +59,6 @@ gancio_events_json_response = [{
 
 class CalendarTest(unittest.TestCase):
 
-    def setUp(self):
-        os.environ["LHC_CHAT_ID"] = "1"
-        os.environ["TELEGRAM_API_TOKEN"] = "abcdef"
-        os.environ["MONTASTIC_RSS_URL"] = "https://lhc.net.br/rss"
-        os.environ["FINANCE_STATUS_URL"] = "https://lhc.net.br/finance"
-        os.environ["ICS_LOCATION"] = "https://gancio-eventos-lhc.fly.dev/api/events"
-
-
     @parameterized.expand([
         ("today"),
         ("future")
@@ -89,12 +87,9 @@ class CalendarTest(unittest.TestCase):
         # WHEN
         events = cal.get_events(when)
         print(events)
-        # THEN the test may run at a time when the event2 will be tomorrow
-        # if event2.begin.date() == datetime.today():
+        # THEN
         self.assertEqual(len(events), 1, msg="It should contain the event that starts in the future")
         self.assertEqual(events[0].name, "CofeeOps", msg="It should be the event name that starts in the future")
-        # else:
-            # self.assertEqual(len(events), 0, msg="If the event is tomorrow, it should not be in the list")
 
     @parameterized.expand([
         ("today"),
@@ -156,8 +151,8 @@ class CalendarTest(unittest.TestCase):
         events = cal.get_events(when)
         print(events)
         # THEN
-        self.assertEqual(len(events), 2, msg="It should contain the two events")
-        self.assertEqual(min(events, key=lambda e: e.begin).name, "Oficina IoT", msg="First event do now match")
+        self.assertEqual(len(events), 2, msg="It should contain the two future events")
+        self.assertEqual(min(events, key=lambda e: e.begin).name, "Oficina IoT", msg="First event should be the earliest date")
 
 
 if __name__ == '__main__':

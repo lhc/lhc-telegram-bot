@@ -67,33 +67,34 @@ class CalendarTest(unittest.TestCase):
     ])
     @patch('httpx.get')
     @patch('ics.Calendar')
-    def test_today_2events_one_in_the_past_other_in_the_future(self, when, mock_Calendar, mock_get):
+    @patch('datetime.datetime')
+    def test_today_2events_one_in_the_past_other_in_the_future(self, when, mock_datetime, mock_Calendar, mock_http_get):
         # GIVEN
+        now = datetime(2025, 2, 25, 8, 0, 0)
+        print(f'Base date/time is {now}')
+        four_hours_earlier = now - timedelta(hours=4)
+        four_hours_ahead = now + timedelta(hours=4)
+        event1 = Event("Oficina IoT", begin=four_hours_earlier, end=(four_hours_earlier + timedelta(hours=2)))
+        event2 = Event("CofeeOps", begin=four_hours_ahead, end=(four_hours_ahead + timedelta(hours=2)))
+        # GIVEN mocks
         mock_response = Mock()
-        mock_response.text = gancio_events_json_response  # Example ICS content
-        mock_get.return_value = mock_response
-
-        now = datetime.now()
-        print(f'Today is {now}')
-        two_hours_ago = now - timedelta(hours=2)
-        three_hours_ahead = now + timedelta(hours=3)
-        after_two_hours = three_hours_ahead + timedelta(hours=2)
-
-        event1 = Event("Oficina IoT", begin=two_hours_ago, end=now)
-        event2 = Event("CofeeOps", begin=three_hours_ahead, end=after_two_hours)
+        mock_response.text = gancio_events_json_response
+        mock_http_get.return_value = mock_response
 
         mock_calendar = Mock()
         mock_calendar.events = [ event1, event2 ]
         mock_Calendar.return_value = mock_calendar
+
+        mock_datetime.now.return_value = now
         # WHEN
         events = cal.get_events(when)
         print(events)
         # THEN the test may run at a time when the event2 will be tomorrow
-        if event2.begin.date() == datetime.today():
-            self.assertEqual(len(events), 1)
-            self.assertEqual(events[0].name, "CofeeOps")
-        else:
-            self.assertEqual(len(events), 0)
+        # if event2.begin.date() == datetime.today():
+        self.assertEqual(len(events), 1, msg="It should contain the event that starts in the future")
+        self.assertEqual(events[0].name, "CofeeOps", msg="It should be the event name that starts in the future")
+        # else:
+            # self.assertEqual(len(events), 0, msg="If the event is tomorrow, it should not be in the list")
 
     @parameterized.expand([
         ("today"),
@@ -101,29 +102,62 @@ class CalendarTest(unittest.TestCase):
     ])
     @patch('httpx.get')
     @patch('ics.Calendar')
-    def test_today_2events_one_in_the_past_other_now(self, when, mock_Calendar, mock_get):
+    @patch('datetime.datetime')
+    def test_today_2events_one_in_the_past_other_now(self, when, mock_datetime, mock_Calendar, mock_http_get):
         # GIVEN
+        now = datetime(2025, 2, 25, 8, 0, 0)
+        print(f'Base date/time is {now}')
+        four_hours_earlier = now - timedelta(hours=4)
+        event1 = Event("Oficina IoT", begin=four_hours_earlier, end=(four_hours_earlier + timedelta(hours=2)))
+        event2 = Event("CofeeOps", begin=now, end=(now + timedelta(hours=2)))
+        # GIVEN mocks
         mock_response = Mock()
-        mock_response.text = gancio_events_json_response  # Example ICS content
-        mock_get.return_value = mock_response
-
-        now = datetime.now()
-        print(f'Today is {now}')
-        two_hours_ago = now - timedelta(hours=2)
-        after_two_hours = now + timedelta(hours=2)
-
-        event1 = Event("Oficina IoT", begin=two_hours_ago, end=now)
-        event2 = Event("CofeeOps", begin=(now+timedelta(seconds=1)), end=after_two_hours)
+        mock_response.text = gancio_events_json_response
+        mock_http_get.return_value = mock_response
 
         mock_calendar = Mock()
         mock_calendar.events = [ event1, event2 ]
         mock_Calendar.return_value = mock_calendar
+
+        mock_datetime.now.return_value = now
         # WHEN
         events = cal.get_events(when)
         print(events)
         # THEN
-        self.assertEqual(len(events), 1)
-        self.assertEqual(events[0].name, "CofeeOps")
+        self.assertEqual(len(events), 1, msg="It should contain the event that starts from now")
+        self.assertEqual(events[0].name, "CofeeOps", msg="It should be the event name that starts from now")
+
+    @parameterized.expand([
+        ("today"),
+        ("future")
+    ])
+    @patch('httpx.get')
+    @patch('ics.Calendar')
+    @patch('datetime.datetime')
+    def test_today_2events_in_the_future(self, when, mock_datetime, mock_Calendar, mock_http_get):
+        # GIVEN
+        now = datetime(2025, 2, 25, 8, 0, 0)
+        print(f'Base date/time is {now}')
+        four_hours_ahead = now + timedelta(hours=4)
+        ten_hours_ahead = now + timedelta(hours=10)
+        event1 = Event("Oficina IoT", begin=four_hours_ahead, end=(four_hours_ahead + timedelta(hours=2)))
+        event2 = Event("CofeeOps", begin=ten_hours_ahead, end=(ten_hours_ahead + timedelta(hours=2)))
+        # GIVEN mocks
+        mock_response = Mock()
+        mock_response.text = gancio_events_json_response
+        mock_http_get.return_value = mock_response
+
+        mock_calendar = Mock()
+        mock_calendar.events = [ event1, event2 ]
+        mock_Calendar.return_value = mock_calendar
+
+        mock_datetime.now.return_value = now
+        # WHEN
+        events = cal.get_events(when)
+        print(events)
+        # THEN
+        self.assertEqual(len(events), 2, msg="It should contain the two events")
+        self.assertEqual(min(events, key=lambda e: e.begin).name, "Oficina IoT", msg="First event do now match")
 
 
 if __name__ == '__main__':

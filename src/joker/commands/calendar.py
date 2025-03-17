@@ -25,11 +25,11 @@ def get_events(when=""):
 
     if when == "future":
         events = [
-            event for event in all_events if event.begin.time() >= datetime.datetime.now().time()
+            event for event in all_events if event.begin.time().hour >= datetime.datetime.now().time().hour
         ]
     elif when == "today":
         events = [
-            event for event in all_events if event.begin.time() >= datetime.datetime.now().time()
+            event for event in all_events if event.begin.time().hour >= datetime.datetime.now().time().hour
         ]
     else:
         events = all_events

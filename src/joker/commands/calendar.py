@@ -3,7 +3,7 @@ import logging
 import time
 
 import httpx
-from ics import Calendar
+import ics
 from telegram.constants import ParseMode
 
 from joker import settings
@@ -19,17 +19,17 @@ def get_events(when=""):
         time.sleep(1)
         response = httpx.get(settings.ICS_LOCATION)
 
-    calendar = Calendar(response.text)
+    calendar = ics.Calendar(response.text)
 
     all_events = list({event for event in calendar.events})
 
     if when == "future":
         events = [
-            event for event in all_events if event.begin.date() >= datetime.date.today()
+            event for event in all_events if event.begin.time().hour >= datetime.datetime.now().time().hour
         ]
     elif when == "today":
         events = [
-            event for event in all_events if event.begin.date() == datetime.date.today()
+            event for event in all_events if event.begin.time().hour >= datetime.datetime.now().time().hour
         ]
     else:
         events = all_events

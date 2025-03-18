@@ -1,18 +1,19 @@
 import datetime
-
 import httpx
 import parsel
+import pytz
 from telegram.constants import ParseMode
 
 from joker import settings
 
+SAO_PAULO_TZ = pytz.timezone("America/Sao_Paulo")
 
 async def status(update, context):
     response = httpx.get("https://status.lhc.net.br/").json()
 
     status = "aberto" if response["state"]["open"] else "fechado"
 
-    last_change = datetime.datetime.utcfromtimestamp(response["state"]["lastchange"])
+    last_change = datetime.datetime.fromtimestamp(response["state"]["lastchange"], tz=SAO_PAULO_TZ)
     last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
 
     await context.bot.send_message(

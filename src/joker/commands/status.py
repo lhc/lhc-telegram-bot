@@ -19,7 +19,7 @@ async def status(update, context):
 
     last_change = datetime.datetime.fromtimestamp(response["state"]["lastchange"], tz=SAO_PAULO_TZ)
     
-    humanized_last_change = humanize.precisedelta(last_change)
+    humanized_last_change = humanize.naturaltime(last_change)
     raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")    
 
     await context.bot.send_message(

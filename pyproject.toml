@@ -14,7 +14,8 @@ dependencies = [
   "python-decouple",
   "python-telegram-bot[job-queue]",
   "pytz",
-  "parameterized"
+  "parameterized",
+  "humanize"
 ]
 
 [build-system]

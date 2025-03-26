@@ -1,27 +1,30 @@
 import datetime
+
 import httpx
+import humanize
 import parsel
 import pytz
-import humanize as h
 from telegram.constants import ParseMode
 
 from joker import settings
 
 SAO_PAULO_TZ = pytz.timezone("America/Sao_Paulo")
-h.activate('pt_BR')
+
 
 async def status(update, context):
+    humanize.activate("pt_BR")
     response = httpx.get("https://status.lhc.net.br/").json()
 
-    status = "aberto" if response["state"]["open"] else "fechado"
+    status = "🟢 aberto" if response["state"]["open"] else "🔴 fechado"
 
     last_change = datetime.datetime.fromtimestamp(response["state"]["lastchange"], tz=SAO_PAULO_TZ)
-    last_change = h.precisedelta(last_change)
-    # last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
+    
+    humanized_last_change = humanize.precisedelta(last_change)
+    raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")    
 
     await context.bot.send_message(
         update.message.chat_id,
-        text=f"O LHC está {status} desde {last_change} atrás",
+        text=f"O LHC está {status} desde {humanized_last_change} atrás ({raw_last_change})",
     )
 
 

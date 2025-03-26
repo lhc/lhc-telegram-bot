@@ -13,6 +13,7 @@ def Joker(settings):
     app.add_handler(CommandHandler("status", status.status))
     app.add_handler(CommandHandler("status_infra", status.status_infra))
     app.job_queue.run_daily(status.recurring_status_infra, datetime.time(12, 0))
+    app.job_queue.run_repeating(status.recurring_status, datetime.timedelta(0, 30))
 
     # Finance commands
     app.add_handler(CommandHandler("grana", finance.grana))

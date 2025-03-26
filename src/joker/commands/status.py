@@ -24,7 +24,7 @@ async def status(update, context):
 
     await context.bot.send_message(
         update.message.chat_id,
-        text=f"O LHC está {status} desde {humanized_last_change} atrás ({raw_last_change})",
+        text=f"O LHC está {status} {humanized_last_change} ({raw_last_change})",
     )
 
 

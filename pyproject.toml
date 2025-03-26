@@ -13,6 +13,7 @@ dependencies = [
   "parsel",
   "python-decouple",
   "python-telegram-bot[job-queue]",
+  "pytz",
   "parameterized"
 ]
 

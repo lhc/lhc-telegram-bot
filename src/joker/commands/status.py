@@ -14,15 +14,16 @@ async def send_lhc_status(context, chat_id, requested=True):
     humanize.activate("pt_BR")
     response = httpx.get("https://status.lhc.net.br/").json()
 
-    lastchange = response["state"]["lastchange"]
-    lastchange_delta = datetime.datetime.now() - lastchange
-
-    if requested or lastchange_delta.totalseconds() > 1800:
+    last_change = datetime.datetime.fromtimestamp(
+        response["state"]["lastchange"], tz=SAO_PAULO_TZ
+    )
+    last_change_delta = datetime.datetime.now(tz=SAO_PAULO_TZ) - last_change
+    if (
+        requested
+        or last_change_delta.total_seconds() > settings.STATUS_CHECK_INTERVAL * 60
+    ):
         status = "🔓 aberto" if response["state"]["open"] else "🔒 fechado"
 
-        last_change = datetime.datetime.fromtimestamp(
-            response["state"]["lastchange"], tz=SAO_PAULO_TZ
-        )
         humanized_last_change = humanize.naturaltime(last_change)
         raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
 

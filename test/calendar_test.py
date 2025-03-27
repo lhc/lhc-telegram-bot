@@ -66,7 +66,8 @@ class CalendarTest(unittest.TestCase):
     @patch('httpx.get')
     @patch('ics.Calendar')
     @patch('datetime.datetime')
-    def test_today_2events_one_in_the_past_other_in_the_future(self, when, mock_datetime, mock_Calendar, mock_http_get):
+    @patch('datetime.date')
+    def test_should_return_only_future_when_today_2events_one_in_the_past_other_in_the_future(self, when, mock_date, mock_datetime, mock_Calendar, mock_http_get):
         # GIVEN
         now = datetime(2025, 2, 25, 8, 0, 0)
         print(f'Base date/time is {now}')
@@ -84,6 +85,7 @@ class CalendarTest(unittest.TestCase):
         mock_Calendar.return_value = mock_calendar
 
         mock_datetime.now.return_value = now
+        mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
         print(events)
@@ -98,7 +100,8 @@ class CalendarTest(unittest.TestCase):
     @patch('httpx.get')
     @patch('ics.Calendar')
     @patch('datetime.datetime')
-    def test_today_2events_one_in_the_past_other_now(self, when, mock_datetime, mock_Calendar, mock_http_get):
+    @patch('datetime.date')
+    def test_should_only_now_when_today_2events_one_in_the_past_other_now(self, when, mock_date, mock_datetime, mock_Calendar, mock_http_get):
         # GIVEN
         now = datetime(2025, 2, 25, 8, 0, 0)
         print(f'Base date/time is {now}')
@@ -115,6 +118,7 @@ class CalendarTest(unittest.TestCase):
         mock_Calendar.return_value = mock_calendar
 
         mock_datetime.now.return_value = now
+        mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
         print(events)
@@ -129,7 +133,8 @@ class CalendarTest(unittest.TestCase):
     @patch('httpx.get')
     @patch('ics.Calendar')
     @patch('datetime.datetime')
-    def test_today_2events_in_the_future(self, when, mock_datetime, mock_Calendar, mock_http_get):
+    @patch('datetime.date')
+    def test_should_return_earliest_when_today_2events_in_the_future(self, when, mock_date, mock_datetime, mock_Calendar, mock_http_get):
         # GIVEN
         now = datetime(2025, 2, 25, 8, 0, 0)
         print(f'Base date/time is {now}')
@@ -147,12 +152,46 @@ class CalendarTest(unittest.TestCase):
         mock_Calendar.return_value = mock_calendar
 
         mock_datetime.now.return_value = now
+        mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
         print(events)
         # THEN
         self.assertEqual(len(events), 2, msg="It should contain the two future events")
         self.assertEqual(min(events, key=lambda e: e.begin).name, "Oficina IoT", msg="First event should be the earliest date")
+
+    
+    @parameterized.expand([
+        ("today"),
+        ("future")
+    ])
+    @patch('httpx.get')
+    @patch('ics.Calendar')
+    @patch('datetime.datetime')
+    @patch('datetime.date')
+    def test_should_be_empty_when_all_events_in_the_past(self, when, mock_date, mock_datetime, mock_Calendar, mock_http_get):
+        # GIVEN
+        now = datetime(2025, 2, 25, 8, 0, 0)
+        print(f'Base date/time is {now}')
+        yesterday = now - timedelta(days=1)
+        print(f'Yesterday date/time is {yesterday}')
+        event1 = Event("Oficina IoT", begin=yesterday, end=(yesterday + timedelta(hours=1)))
+        # GIVEN mocks
+        mock_response = Mock()
+        mock_response.text = gancio_events_json_response
+        mock_http_get.return_value = mock_response
+
+        mock_calendar = Mock()
+        mock_calendar.events = [ event1 ]
+        mock_Calendar.return_value = mock_calendar
+
+        mock_datetime.now.return_value = now
+        mock_date.today.return_value = now.date()
+        # WHEN
+        events = cal.get_events(when)
+        print(events)
+        # THEN
+        self.assertEqual(len(events), 0, msg="It should contain no events")
 
 
 if __name__ == '__main__':

@@ -27,10 +27,15 @@ async def send_lhc_status(context, chat_id, requested=True):
         humanized_last_change = humanize.naturaltime(last_change)
         raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
 
+        msg = f"""O LHC está {status} {humanized_last_change}
+(última alteração em {raw_last_change})"""
+
+        if status == "🔓 aberto" and last_change_delta.total_seconds() > 86400:
+            msg += ". Nunca vi o LHC aberto continuamente tanto tempo assim. Provavelmente alguém esqueceu a chave ligada e foi embora."
+
         await context.bot.send_message(
             chat_id,
-            text=f"""O LHC está {status} {humanized_last_change}
-(última alteração em {raw_last_change})""",
+            text=msg,
         )
 
 

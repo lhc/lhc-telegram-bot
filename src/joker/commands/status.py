@@ -20,7 +20,7 @@ async def send_lhc_status(context, chat_id, requested=True):
     last_change_delta = datetime.datetime.now(tz=SAO_PAULO_TZ) - last_change
     if (
         requested
-        or last_change_delta.total_seconds() > settings.STATUS_CHECK_INTERVAL * 60
+        or last_change_delta.total_seconds() < settings.STATUS_CHECK_INTERVAL * 60
     ):
         status = "🔓 aberto" if response["state"]["open"] else "🔒 fechado"
 

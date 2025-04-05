@@ -8,11 +8,25 @@ from telegram.constants import ParseMode
 
 from joker import settings
 
+previous_lhc_status = None
 
 async def send_lhc_status(context, chat_id, requested=True):
     SAO_PAULO_TZ = pytz.timezone("America/Sao_Paulo")
     humanize.activate("pt_BR")
+
     response = httpx.get("https://status.lhc.net.br/").json()
+
+    # Se o HomeAssistant rebootar por algum motivo (por exemplo durante
+    # uma atualização de sistema), ou a chave mudar de "fechada" para
+    # "aberto para associados" (que é tecnicamente uma mudança de
+    # estado mas publicamente continua fechado), evita mostrar
+    # mensagens de estado automáticas a não ser que o estado seja
+    # diferente da vez anterior que o timer expirou.
+    if not requested:
+        global previous_lhc_status
+        if response["state"]["open"] == previous_lhc_status:
+            return
+        previous_lhc_status = response["state"]["open"]
 
     last_change = datetime.datetime.fromtimestamp(
         response["state"]["lastchange"], tz=SAO_PAULO_TZ

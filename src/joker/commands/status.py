@@ -36,21 +36,25 @@ async def send_lhc_status(context, chat_id, requested=True):
         requested
         or last_change_delta.total_seconds() < settings.STATUS_CHECK_INTERVAL * 60
     ):
-        status = "🔓 aberto" if response["state"]["open"] else "🔒 fechado"
+
+	extra = ""
+        if response["state"]["open"]:
+            status = "🔓aberto"
+            status_resource = resource.files("joker") / "assets/lhc-aberto.jpg"
+            if last_change_delta.total_seconds() > 86400:
+                extra = ". Nunca vi o LHC aberto continuamente tanto tempo assim. Provavelmente alguém esqueceu a chave ligada e foi embora."
+        else:
+            status = "🔒fechado"
+            status_resource = resource.files("joker") / "assets/lhc-fechado.jpg"
 
         humanized_last_change = humanize.naturaltime(last_change)
         raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
 
         msg = f"""O LHC está {status} {humanized_last_change}
-(última alteração em {raw_last_change})"""
+(última alteração em {raw_last_change}){extra}"""
 
-        if status == "🔓 aberto" and last_change_delta.total_seconds() > 86400:
-            msg += ". Nunca vi o LHC aberto continuamente tanto tempo assim. Provavelmente alguém esqueceu a chave ligada e foi embora."
-
-        await context.bot.send_message(
-            chat_id,
-            text=msg,
-        )
+	with open(status_resource, "rb") as status_file:
+	    await context.bot.send_photo(update.message.chat_id, status_file, caption=msg)
 
 
 async def status(update, context):

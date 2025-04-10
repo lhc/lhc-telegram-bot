@@ -5,6 +5,7 @@ import httpx
 import humanize
 import parsel
 import pytz
+import random
 from telegram.constants import ParseMode
 
 from joker import settings
@@ -46,7 +47,10 @@ async def send_lhc_status(context, chat_id, requested=True):
                 extra = ". Nunca vi o LHC aberto continuamente tanto tempo assim. Provavelmente alguém esqueceu a chave ligada e foi embora."
         else:
             status = "🔒fechado"
-            status_resource = resources.files("joker") / "assets/lhc-fechado.jpg"
+            if random.randint(0, 100) > 95:
+                status_resource = resources.files("joker") / "assets/lhc-fechado-olhinhos.jpg"
+            else:
+                status_resource = resources.files("joker") / "assets/lhc-fechado.jpg"
 
         humanized_last_change = humanize.naturaltime(last_change)
         raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")

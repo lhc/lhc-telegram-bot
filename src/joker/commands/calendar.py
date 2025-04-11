@@ -24,13 +24,17 @@ def get_events(when=""):
     all_events = list({event for event in calendar.events})
     logger.info(f"Future Events: {all_events}")
 
+    today = datetime.date.today()
+    event_begin_date = event.begin.date()
+    event_begin_time = event.begin.time()
+
     if when == "future":
         events = [
-            event for event in all_events if (event.begin.date() > datetime.date.today()) or (event.begin.date() == datetime.date.today() and event.begin.time() >= datetime.datetime.now().time())
+            event for event in all_events if (event_begin_date > today) or (event_begin_date == today and event_begin_time >= datetime.datetime.now().time())
         ]
     elif when == "today":
         events = [
-            event for event in all_events if event.begin.date() == datetime.date.today() and event.begin.time() >= datetime.datetime.now().time()
+            event for event in all_events if event_begin_date == today and event_begin_time >= datetime.datetime.now().time()
         ]
     else:
         events = all_events

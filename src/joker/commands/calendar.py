@@ -22,10 +22,11 @@ def get_events(when=""):
     calendar = ics.Calendar(response.text)
 
     all_events = list({event for event in calendar.events})
+    logger.info(f"Future Events: {all_events}")
 
     if when == "future":
         events = [
-            event for event in all_events if event.begin.date() >= datetime.date.today() and event.begin.time() >= datetime.datetime.now().time()
+            event for event in all_events if (event.begin.date() > datetime.date.today()) or (event.begin.date() == datetime.date.today() and event.begin.time() >= datetime.datetime.now().time())
         ]
     elif when == "today":
         events = [
@@ -40,6 +41,7 @@ def get_events(when=""):
 async def quando(update, context):
     future_events = get_events("future")
     next_event = min(future_events, key=lambda e: e.begin)
+    logger.info(f"Next Event: {next_event}")
     if next_event:
         event = {
             "title": next_event.name,

@@ -88,7 +88,7 @@ class CalendarTest(unittest.TestCase):
         mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
-        print(events)
+        print(f'Result Events: {events}')
         # THEN
         self.assertEqual(len(events), 1, msg="It should contain the event that starts in the future")
         self.assertEqual(events[0].name, "CofeeOps", msg="It should be the event name that starts in the future")
@@ -121,7 +121,7 @@ class CalendarTest(unittest.TestCase):
         mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
-        print(events)
+        print(f'Result Events: {events}')
         # THEN
         self.assertEqual(len(events), 1, msg="It should contain the event that starts from now")
         self.assertEqual(events[0].name, "CofeeOps", msg="It should be the event name that starts from now")
@@ -155,7 +155,7 @@ class CalendarTest(unittest.TestCase):
         mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
-        print(events)
+        print(f'Result Events: {events}')
         # THEN
         self.assertEqual(len(events), 2, msg="It should contain the two future events")
         self.assertEqual(min(events, key=lambda e: e.begin).name, "Oficina IoT", msg="First event should be the earliest date")
@@ -189,9 +189,44 @@ class CalendarTest(unittest.TestCase):
         mock_date.today.return_value = now.date()
         # WHEN
         events = cal.get_events(when)
-        print(events)
+        print(f'Result Events: {events}')
         # THEN
         self.assertEqual(len(events), 0, msg="It should contain no events")
+
+    @parameterized.expand([
+        # the arguments should consider an hour which's before the events time and another hour which's after the events time
+        (8),
+        (23)
+    ])
+    @patch('httpx.get')
+    @patch('ics.Calendar')
+    @patch('datetime.datetime')
+    @patch('datetime.date')
+    def test_should_return_all_events_in_the_next_days_when_time_before_and_after(self, base_hour, mock_date, mock_datetime, mock_Calendar, mock_http_get):
+        # GIVEN
+        now = datetime(2025, 2, 25, base_hour, 0, 0)
+        print(f'Base date/time is {now}')
+        tomorrow = now + timedelta(days=1)
+        event_time = tomorrow + timedelta(hours=10)
+        event1 = Event("Oficina IoT", begin=event_time, end=(event_time + timedelta(hours=2)))
+        event2 = Event("CofeeOps", begin=(event_time + timedelta(days=1)), end=(event_time + timedelta(days=1) + timedelta(hours=2)))
+        # GIVEN mocks
+        mock_response = Mock()
+        mock_response.text = gancio_events_json_response
+        mock_http_get.return_value = mock_response
+
+        mock_calendar = Mock()
+        mock_calendar.events = [ event1, event2 ]
+        mock_Calendar.return_value = mock_calendar
+
+        mock_datetime.now.return_value = now
+        mock_date.today.return_value = now.date()
+        
+        # WHEN
+        events = cal.get_events("future")
+        print(f'Result Events: {events}')
+        # THEN
+        self.assertEqual(len(events), 2, msg="It should return all events")
 
 
 if __name__ == '__main__':

@@ -131,8 +131,10 @@ async def pin_today_event(update, context):
         }
         today_event_msg = f"**Hoje** {event['date']} vai rolar \"{event['title']}\". Mais informações em {event['url']}."
 
-        message = context.bot.send_message(
-            settings.LHC_CHAT_ID, text=today_event_msg, parse_mode=ParseMode.MARKDOWN
+        message = await context.bot.send_message(
+            settings.LHC_CHAT_ID,
+            text=today_event_msg,
+            parse_mode=ParseMode.MARKDOWN,
         )
 
         await context.bot.pin_chat_message(

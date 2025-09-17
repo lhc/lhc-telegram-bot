@@ -34,6 +34,7 @@ def Joker(settings):
     # Calendar commands
     app.job_queue.run_daily(calendar.pin_today_event, datetime.time(5, 0))
     app.add_handler(CommandHandler("quando", calendar.quando))
+    app.add_handler(CommandHandler("semana", calendar.semana))
 
     # Miscellaneous commands
     app.add_handler(CommandHandler("batima", misc.batima))

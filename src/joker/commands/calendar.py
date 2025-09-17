@@ -26,11 +26,20 @@ def get_events(when=""):
 
     if when == "future":
         events = [
-            event for event in all_events if (event.begin.date() > datetime.date.today()) or (event.begin.date() == datetime.date.today() and event.begin.time() >= datetime.datetime.now().time())
+            event
+            for event in all_events
+            if (event.begin.date() > datetime.date.today())
+            or (
+                event.begin.date() == datetime.date.today()
+                and event.begin.time() >= datetime.datetime.now().time()
+            )
         ]
     elif when == "today":
         events = [
-            event for event in all_events if event.begin.date() == datetime.date.today() and event.begin.time() >= datetime.datetime.now().time()
+            event
+            for event in all_events
+            if event.begin.date() == datetime.date.today()
+            and event.begin.time() >= datetime.datetime.now().time()
         ]
     else:
         events = all_events
@@ -55,6 +64,47 @@ async def quando(update, context):
             update.message.chat_id,
             text="Não existe nenhum evento agendado até o momento.",
         )
+
+
+async def semana(update, context):
+    today = datetime.date.today()
+    future_events = get_events("future")
+    end_of_week = today + datetime.timedelta(days=7)
+
+    week_events = []
+    for event in future_events:
+        if event.begin.date() > end_of_week:
+            continue
+        week_events.append(
+            {
+                "title": event.name,
+                "date": event.begin.strftime("%d/%m/%Y"),
+                "url": event.url,
+            }
+        )
+
+    if not week_events:
+        message = "Não existe nenhum evento agendado nos próximos 7 dias 😞"
+    else:
+        week_events = sorted(week_events, key=lambda e: e["date"])
+        events_details = "\n".join(
+            [
+                f"- {event['date']} - \"{event['title']}\" ({event['url']})"
+                for event in week_events
+            ]
+        )
+        message = f"""**Agenda para os próximos 7 dias:**
+
+{events_details}
+
+Agenda completa em https://eventos.lhc.net.br/"""
+
+    await context.bot.send_message(
+        update.message.chat_id,
+        text=message,
+        parse_mode=ParseMode.MARKDOWN,
+        disable_web_page_preview=True,
+    )
 
 
 async def pin_today_event(update, context):

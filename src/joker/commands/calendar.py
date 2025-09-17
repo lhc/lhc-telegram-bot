@@ -66,7 +66,7 @@ async def quando(update, context):
         )
 
 
-async def semana(update, context):
+def get_semana():
     today = datetime.date.today()
     future_events = get_events("future")
     end_of_week = today + datetime.timedelta(days=7)
@@ -99,9 +99,22 @@ async def semana(update, context):
 
 Agenda completa em https://eventos.lhc.net.br/"""
 
+    return message
+
+
+async def semana(update, context):
     await context.bot.send_message(
         update.message.chat_id,
-        text=message,
+        text=get_semana(),
+        parse_mode=ParseMode.MARKDOWN,
+        disable_web_page_preview=True,
+    )
+
+
+async def recurring_semana(context):
+    await context.bot.send_message(
+        settings.LHC_CHAT_ID,
+        text=get_semana(),
         parse_mode=ParseMode.MARKDOWN,
         disable_web_page_preview=True,
     )

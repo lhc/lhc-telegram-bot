@@ -1,6 +1,7 @@
 import datetime
 import logging
 import time
+from dataclasses import dataclass
 
 import httpx
 import ics
@@ -9,6 +10,13 @@ from telegram.constants import ParseMode
 from joker import settings
 
 logger = logging.getLogger("joker")
+
+
+@dataclass
+class Event:
+    date: datetime.date
+    name: str
+    url: str
 
 
 def get_events(when=""):
@@ -76,28 +84,28 @@ def get_semana():
         if event.begin.date() > end_of_week:
             continue
         week_events.append(
-            {
-                "title": event.name,
-                "date": event.begin.strftime("%d/%m/%Y"),
-                "url": event.url,
-            }
+            Event(
+                date=event.begin.strftime("%d/%m/%Y"),
+                name=event.name,
+                url=event.url,
+            )
         )
 
     if not week_events:
         message = "Não existe nenhum evento agendado nos próximos 7 dias 😞"
     else:
-        week_events = sorted(week_events, key=lambda e: e["date"])
+        week_events = sorted(week_events, key=lambda e: e.date)
         events_details = "\n".join(
             [
-                f"- {event['date']} - \"{event['title']}\" ({event['url']})"
+                f"- *{event.date}* - [{event.name}]({event.url})"
                 for event in week_events
             ]
         )
-        message = f"""**Agenda para os próximos 7 dias:**
+        message = f"""**🔜 Agenda para os próximos 7 dias:**
 
 {events_details}
 
-Agenda completa em https://eventos.lhc.net.br/"""
+🗓️ [Acesse aqui a agenda completa do LHC](https://eventos.lhc.net.br/)"""
 
     return message
 

@@ -35,8 +35,8 @@ def Joker(settings):
     app.job_queue.run_daily(calendar.pin_today_event, datetime.time(5, 0))
     app.job_queue.run_daily(
         calendar.recurring_semana,
-        datetime.time(12, 30),
-        days=(0, 2, 4),
+        datetime.time(12, 20),
+        days=(1, 4, 5, ),
     )
 
     app.add_handler(CommandHandler("quando", calendar.quando))

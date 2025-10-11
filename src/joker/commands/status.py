@@ -63,12 +63,12 @@ async def send_lhc_status(context, chat_id, requested=True):
             if events := calendar.get_events("today_for_status"):
                 msg += f"\n\n{'Evento' if len(events) == 1 else 'Eventos'} acontecendo hoje:\n"
                 msg += "\n".join(
-                    f"- *{event.date}* - [{event.name}]({event.url})"
+                    f"- [{event.name}]({event.url})"
                     for event in events
                 )
 
         with open(status_resource, "rb") as status_file:
-            await context.bot.send_photo(chat_id, status_file, caption=msg)
+            await context.bot.send_photo(chat_id, status_file, caption=msg, parse_mode='Markdown')
 
 
 async def status(update, context):

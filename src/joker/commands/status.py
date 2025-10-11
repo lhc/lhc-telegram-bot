@@ -60,7 +60,7 @@ async def send_lhc_status(context, chat_id, requested=True):
 (última alteração em {raw_last_change}){extra}"""
 
         if response["state"]["open"]:
-            if events := calendar.get_events("today"):
+            if events := calendar.get_events("today_for_status"):
                 msg += f"\n\n{'Evento' if len(events) == 1 else 'Eventos'} acontecendo hoje:\n"
                 msg += "\n".join(
                     f"- *{event.date}* - [{event.name}]({event.url})"

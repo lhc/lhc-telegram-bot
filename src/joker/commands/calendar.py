@@ -49,6 +49,12 @@ def get_events(when=""):
             if event.begin.date() == datetime.date.today()
             and event.begin.time() >= datetime.datetime.now().time()
         ]
+    elif when == "today_for_status":
+        events = [
+            event
+            for event in all_events
+            if event.begin.date() == datetime.date.today()
+        ]
     else:
         events = all_events
 

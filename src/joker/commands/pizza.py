@@ -7,7 +7,7 @@ from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, fi
 async def pizza(update, context):
     numeric_keyboard = [["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]]
     await update.message.reply_text(
-        "Quantas pessoas vão querer pizza \U0001F355 ???",
+        "Quantas pessoas vão querer \U0001F355pizza?",
         reply_markup=ReplyKeyboardMarkup(numeric_keyboard, one_time_keyboard=True),
     )
     return 1
@@ -27,8 +27,9 @@ async def pizza_calculator(update, context):
         elif no_pessoas == 0:
             reply_message = "Para nenhuma pessoa, é melhor nem comprar pizza."
         elif 1 <= no_pessoas <= 100:
+            reply_message = ""
             for pedacos in (1, 2, 3):
-                reply_message = f"Com {no_pessoas} pessoa{'s' if no_pessoas > 1 else ''} comendo {pedacos} pedaço{'s' if pedacos > 1 else ''}\U0001F355 cada:\n"
+                reply_message += f"Com {no_pessoas} pessoa{'s' if no_pessoas > 1 else ''} comendo {pedacos} pedaço{'s' if pedacos > 1 else ''}\U0001F355 cada:\n"
                 ultimo_calculo = -1
                 for tamanho in (8, 16, 22):
                     no_pizzas = math.ceil(pedacos * (no_pessoas + 1) / tamanho)

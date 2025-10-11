@@ -9,7 +9,7 @@ import random
 from telegram.constants import ParseMode
 
 from joker import settings
-import calendar as joker_calendar
+from joker.commands import calendar
 
 previous_lhc_status = None
 
@@ -60,14 +60,11 @@ async def send_lhc_status(context, chat_id, requested=True):
 (última alteração em {raw_last_change}){extra}"""
 
         if response["state"]["open"]:
-            events = sorted(joker_calendar.get_events("today"), key=lambda e: e.date)
-            if events:
+            if events := calendar.get_events("today"):
                 msg += f"\n\n{'Evento' if len(events) == 1 else 'Eventos'} acontecendo hoje:\n"
                 msg += "\n".join(
-                    [
-                        f"- *{event.date}* - [{event.name}]({event.url})"
-                        for event in events
-                    ]
+                    f"- *{event.date}* - [{event.name}]({event.url})"
+                    for event in events
                 )
 
         with open(status_resource, "rb") as status_file:

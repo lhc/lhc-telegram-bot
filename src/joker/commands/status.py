@@ -14,6 +14,19 @@ from joker.commands import calendar
 previous_lhc_status = None
 
 
+def resource_when_closed():
+    if random.randint(0, 100) > 60:
+        return random.choice((
+            "assets/lhc-fechado-olhinhos.jpg",
+            "assets/0.mp4",
+            "assets/1.mp4",
+            "assets/2.mp4",
+            "assets/3.mp4",
+            "assets/4.mp4",
+            "assets/5.mp4",
+        ))
+    return "assets/lhc-fechado.jpg"
+
 async def send_lhc_status(context, chat_id, requested=True):
     SAO_PAULO_TZ = pytz.timezone("America/Sao_Paulo")
     humanize.activate("pt_BR")
@@ -43,15 +56,12 @@ async def send_lhc_status(context, chat_id, requested=True):
         extra = ""
         if response["state"]["open"]:
             status = "🔓aberto"
-            status_resource = resources.files("joker") / "assets/lhc-aberto.jpg"
+            resource_name = "assets/lhc-aberto.jpg"
             if last_change_delta.total_seconds() > 86400:
                 extra = ". Nunca vi o LHC aberto continuamente tanto tempo assim. Provavelmente alguém esqueceu a chave ligada e foi embora."
         else:
             status = "🔒fechado"
-            if random.randint(0, 100) > 95:
-                status_resource = resources.files("joker") / "assets/lhc-fechado-olhinhos.jpg"
-            else:
-                status_resource = resources.files("joker") / "assets/lhc-fechado.jpg"
+            resource_name = resource_when_closed()
 
         humanized_last_change = humanize.naturaltime(last_change)
         raw_last_change = last_change.strftime("%Y-%m-%d %H:%M:%S")
@@ -67,8 +77,12 @@ async def send_lhc_status(context, chat_id, requested=True):
                     for event in events
                 )
 
-        with open(status_resource, "rb") as status_file:
-            await context.bot.send_photo(chat_id, status_file, caption=msg, parse_mode='Markdown')
+        resource_file_name = resources.files("joker") / resource_name
+        with open(resource_file_name, "rb") as status_file:
+            if resource_name.endswith(".mp4"):
+                await context.bot.send_animation(chat_id, status_file, caption=msg, parse_mode='Markdown')
+            else:
+                await context.bot.send_photo(chat_id, status_file, caption=msg, parse_mode='Markdown')
 
 
 async def status(update, context):

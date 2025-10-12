@@ -1,4 +1,5 @@
 import math
+from importlib import resources
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, filters
@@ -47,9 +48,12 @@ async def pizza_calculator(update, context):
 
 
 async def pizza_not_a_number(update, context):
-    await update.message.reply_text(
-        "Muito engraçado, hein?", reply_markup=ReplyKeyboardRemove()
-    )
+    sticker_path = resources.files("joker") / "assets/sai-hacker.png"
+    with open(sticker_path, "rb") as sticker:
+        await update.message.reply_sticker(
+            sticker,
+            reply_markup=ReplyKeyboardRemove()
+        )
     return -1
 
 

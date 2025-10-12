@@ -35,8 +35,10 @@ async def pizza_calculator(update, context):
                 for tamanho in (8, 16, 22):
                     no_pizzas = math.ceil(pedacos * no_pessoas / tamanho)
                     if no_pizzas != ultimo_calculo:
-                        reply_message += f"• {no_pizzas} pizzas de {tamanho} pedaços\n"
+                        reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços\n"
                         ultimo_calculo = no_pizzas
+                reply_message += "\n"
+
         elif no_pessoas > 100:
             reply_message = "Mais que 100 pessoas no LHC? Isso vai dar overflow nos meus cálculos, se vira aí."
         else:

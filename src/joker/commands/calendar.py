@@ -19,46 +19,46 @@ class Event:
     url: str
 
 
+def _future_event_filter(event):
+    return event.begin.date() > datetime.date.today() or (
+        event.begin.date() == datetime.date.today()
+        and event.begin.time() >= datetime.datetime.now().time()
+    )
+
+def _today_event_filter(event):
+    return event.begin.date() == datetime.date.today() and (
+        event.begin.time() >= datetime.datetime.now().time()
+    )
+
+def _today_for_status_filter(event):
+    return event.begin.date() == datetime.date.today()
+
+def _no_filter(event):
+    return True
+
+EVENT_FILTERS = {
+    'future': _future_event_filter,
+    'today': _today_event_filter,
+    'today_for_status': _today_for_status_filter,
+}
+
+
+def try_hard_to_get(url, tries=4):
+    for _ in range(tries):
+        try:
+            return httpx.get(url)
+        except httpx.ReadTimeout:
+            time.sleep(1)
+
+    class EmptyResponse:
+        text = ''
+    return EmptyResponse()
+
+
 def get_events(when=""):
-    try:
-        response = httpx.get(settings.ICS_LOCATION)
-    except httpx.ReadTimeout:
-        # Wait for fly.io machine to go live again
-        time.sleep(1)
-        response = httpx.get(settings.ICS_LOCATION)
-
+    response = try_hard_to_get(settings.ICS_LOCATION)
     calendar = ics.Calendar(response.text)
-
-    all_events = list({event for event in calendar.events})
-    logger.info(f"Future Events: {all_events}")
-
-    if when == "future":
-        events = [
-            event
-            for event in all_events
-            if (event.begin.date() > datetime.date.today())
-            or (
-                event.begin.date() == datetime.date.today()
-                and event.begin.time() >= datetime.datetime.now().time()
-            )
-        ]
-    elif when == "today":
-        events = [
-            event
-            for event in all_events
-            if event.begin.date() == datetime.date.today()
-            and event.begin.time() >= datetime.datetime.now().time()
-        ]
-    elif when == "today_for_status":
-        events = [
-            event
-            for event in all_events
-            if event.begin.date() == datetime.date.today()
-        ]
-    else:
-        events = all_events
-
-    return events
+    yield from filter(EVENT_FILTERS.get(when, _no_filter), calendar.events)
 
 
 async def quando(update, context):

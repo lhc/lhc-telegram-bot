@@ -58,7 +58,8 @@ def try_hard_to_get(url, tries=4):
 def get_events(when=""):
     response = try_hard_to_get(settings.ICS_LOCATION)
     calendar = ics.Calendar(response.text)
-    yield from filter(EVENT_FILTERS.get(when, _no_filter), calendar.events)
+    filter = EVENT_FILTERS.get(when, _no_filter)
+    return list(event for event in calendar.events if filter(event))
 
 
 async def quando(update, context):

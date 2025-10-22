@@ -71,7 +71,6 @@ async def send_lhc_status(context, chat_id, requested=True):
 
         if response["state"]["open"]:
             if events := calendar.get_events("today_for_status"):
-                events = list(events)
                 msg += f"\n\n{'Evento' if len(events) == 1 else 'Eventos'} acontecendo hoje:\n"
                 msg += "\n".join(
                     f"- [{event.name}]({event.url})"

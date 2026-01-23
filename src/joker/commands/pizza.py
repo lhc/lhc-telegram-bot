@@ -33,9 +33,17 @@ async def pizza_calculator(update, context):
                 reply_message += f"Com {no_pessoas} pessoa{'s' if no_pessoas > 1 else ''} comendo {pedacos} pedaço{'s' if pedacos > 1 else ''}\U0001F355 cada:\n"
                 ultimo_calculo = -1
                 for tamanho in (8, 16, 22):
-                    no_pizzas = math.ceil(pedacos * no_pessoas / tamanho)
+                    no_pizzas = math.ceil((pedacos * no_pessoas) / tamanho)
                     if no_pizzas != ultimo_calculo:
-                        reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços\n"
+                        reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços"
+
+                        sobra = (pedacos * no_pessoas) % tamanho
+                        if sobra == 1:
+                            reply_message += f" (sobra {sobra} pedaço)"
+                        elif sobra > 1:
+                            reply_message += f" (sobram {sobra} pedaços)"
+
+                        reply_message += "\n"
                         ultimo_calculo = no_pizzas
                 reply_message += "\n"
 

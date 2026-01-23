@@ -37,7 +37,7 @@ async def pizza_calculator(update, context):
                     if no_pizzas != ultimo_calculo:
                         reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços"
 
-                        sobra = (pedacos * no_pessoas) - ((pedacos * no_pessoas) % tamanho)
+                        sobra = no_pizzas * tamanho - pedacos * no_pessoas
                         if sobra == 1:
                             reply_message += f" (sobra {sobra} pedaço)"
                         elif sobra > 1:

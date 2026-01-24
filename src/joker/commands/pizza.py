@@ -91,6 +91,11 @@ async def pizza_calculator(update, context):
                 for tamanho in (8, 16, 22):
                     no_pizzas = math.ceil((pedacos * no_pessoas) / tamanho)
                     if no_pizzas != ultimo_calculo:
+                        sobra = no_pizzas * tamanho - pedacos * no_pessoas
+                        # Evita sobrar mais que meia pizza
+                        if sobra > tamanho / 2:
+                            continue
+
                         reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços{preco}"
 
                         preco = precos.get(tamanho, 0)
@@ -98,7 +103,6 @@ async def pizza_calculator(update, context):
                             preco_total = no_pizzas * preco
                             reply_message += f' no total de R${preco_total:.2f} (R${preco_total / no_pessoas:.2f} por pessoa)'
 
-                        sobra = no_pizzas * tamanho - pedacos * no_pessoas
                         if sobra == 1:
                             reply_message += f" (sobra {sobra} pedaço)"
                         elif sobra > 1:

@@ -1,6 +1,4 @@
 import math
-import time
-import httpx
 from importlib import resources
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
@@ -15,57 +13,6 @@ async def pizza(update, context):
     )
     return 1
 
-
-async def preco_pizza(cache={'last_update': 0}):
-    # Essa função é Go-Horse puro! :)
-
-    if time.time() - cache['last_update'] < 3600 * 24 * 7:
-        return cache
-
-    try:
-        URL = 'https://deliverydireto.com.br/megapizzaforneria/megapizzaforneria?dd=menu'
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0'
-        }
-
-        contents = httpx.get(URL, headers=headers)
-
-        found = False
-        json_contents = []
-
-        for line in contents.text.split('\n'):
-          line = line.strip()
-          if found:
-            if not line:
-              break
-            json_contents.append(line)
-          if '<script id="googlePlaceActionsScript" type="application/ld+json" async>' in line:
-            found = True
-
-        contents = '\n'.join(json_contents)
-        contents = contents.replace('</script>', '')
-        contents = json.loads(contents)
-
-        def eh_pizza(item):
-          return item['name'].endswith(' FATIAS')
-
-        def num_pedacos(nome):
-          return int(nome.split(' ')[-2])
-
-        pizzas = {
-            num_pedacos(item['name']): item['offers']['price']
-            for item in contents['owns']
-            if eh_pizza(item)
-        }
-
-    except:
-        pass
-
-    finally:
-        cache.update(pizzas)
-        cache['last_update'] = time.time()
-
-    return cache
 
 async def pizza_calculator(update, context):
     text = update.message.text
@@ -85,9 +32,6 @@ async def pizza_calculator(update, context):
             for pedacos in (1, 2, 3):
                 reply_message += f"Com {no_pessoas} pessoa{'s' if no_pessoas > 1 else ''} comendo {pedacos} pedaço{'s' if pedacos > 1 else ''}\U0001F355 cada:\n"
                 ultimo_calculo = -1
-
-                precos = await preco_pizza()
-
                 for tamanho in (8, 16, 22):
                     no_pizzas = math.ceil((pedacos * no_pessoas) / tamanho)
                     if no_pizzas != ultimo_calculo:
@@ -96,12 +40,7 @@ async def pizza_calculator(update, context):
                         if sobra > tamanho / 2:
                             continue
 
-                        reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços{preco}"
-
-                        preco = precos.get(tamanho, 0)
-                        if preco:
-                            preco_total = no_pizzas * preco
-                            reply_message += f' no total de R${preco_total:.2f} (R${preco_total / no_pessoas:.2f} por pessoa)'
+                        reply_message += f"• {no_pizzas} {'pizzas' if no_pizzas > 1 else 'pizza'} de {tamanho} pedaços"
 
                         if sobra == 1:
                             reply_message += f" (sobra {sobra} pedaço)"

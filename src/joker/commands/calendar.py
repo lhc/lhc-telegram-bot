@@ -83,8 +83,12 @@ async def quando(update, context):
             "date": next_event.begin.strftime("%d/%m/%Y"),
             "url": next_event.url,
         }
-        next_event_msg = f"Vai rolar \"{event['title']}\" em {event['date']}. Mais informações em {event['url']}."
-        await context.bot.send_message(update.message.chat_id, text=next_event_msg)
+        next_event_msg = f"Vai rolar [{event['title']}]({event['url']}) no dia {event['date']}."
+        await context.bot.send_message(
+            update.message.chat_id,
+            text=next_event_msg,
+            parse_mode=ParseMode.MARKDOWN,
+        )
     else:
         await context.bot.send_message(
             update.message.chat_id,

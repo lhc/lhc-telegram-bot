@@ -60,7 +60,7 @@ async def send_lhc_status(context, chat_id, requested=True):
             if last_change_delta.total_seconds() > 86400:
                 extra = ". Nunca vi o LHC aberto continuamente tanto tempo assim. Provavelmente alguém esqueceu a chave ligada e foi embora."
         else:
-            status = "🔒fechado"
+            status = "🔐fechado"
             resource_name = resource_when_closed()
 
         humanized_last_change = humanize.naturaltime(last_change)

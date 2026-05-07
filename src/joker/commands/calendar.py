@@ -55,11 +55,22 @@ def try_hard_to_get(url, tries=4):
     return EmptyResponse()
 
 
+def sanitize_event(event):
+    name = event.name
+    name = name.replace("(", "❪")
+    name = name.replace(")", "❫")
+    name = name.replace("[", "⟪")
+    name = name.replace("]", "⟫")
+    event.name = name
+
+    return event
+
+
 def get_events(when=""):
     response = try_hard_to_get(settings.ICS_LOCATION)
     calendar = ics.Calendar(response.text)
     filter = EVENT_FILTERS.get(when, _no_filter)
-    return list(event for event in calendar.events if filter(event))
+    return list(sanitize_event(event) for event in calendar.events if filter(event))
 
 
 async def quando(update, context):
